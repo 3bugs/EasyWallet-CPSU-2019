@@ -5,14 +5,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.easywallet.adapter.LedgerRecyclerViewAdapter;
 import com.example.easywallet.db.AppDatabase;
 import com.example.easywallet.db.LedgerItem;
+import com.example.easywallet.db.LedgerRepository;
 
 import java.util.List;
 
@@ -23,28 +26,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        reloadData();
-
         Button incomeButton = findViewById(R.id.income_button);
         incomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LedgerItem item = new LedgerItem(0, "คุณแม่ให้เงิน", 5000);
-                InsertTask task = new InsertTask(MainActivity.this, new InsertCallback() {
-                    @Override
-                    public void onInsertSuccess() {
-                        reloadData();
-                    }
-                });
-                task.execute(item);
+                Intent intent = new Intent(MainActivity.this, InsertActivity.class);
+                intent.putExtra("type", 0);
+                startActivity(intent);
+            }
+        });
+
+        Button expenseButton = findViewById(R.id.expense_button);
+        expenseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InsertActivity.class);
+                intent.putExtra("type", 1);
+                startActivity(intent);
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reloadData();
+    }
+
     private void reloadData() {
-        GetTask getTask = new GetTask(MainActivity.this, new Callback() {
+        LedgerRepository repo = new LedgerRepository(MainActivity.this);
+
+        repo.getLedger(new LedgerRepository.Callback() {
             @Override
             public void onGetLedger(List<LedgerItem> itemList) {
+
+                int totalAmount = 0;
+
+                for (LedgerItem item : itemList) {
+                    totalAmount += item.amount;
+                }
+
+                TextView balanceTextView = findViewById(R.id.balance_text_view);
+                balanceTextView.setText("คงเหลือ ".concat(String.valueOf(totalAmount)).concat(" บาท"));
+
                 RecyclerView recyclerView = findViewById(R.id.ledger_recycler_view);
                 LedgerRecyclerViewAdapter adapter = new LedgerRecyclerViewAdapter(
                         MainActivity.this,
@@ -55,63 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
             }
         });
-        getTask.execute();
     }
 
-    private static class GetTask extends AsyncTask<Void, Void, List<LedgerItem>> {
 
-        private Context mContext;
-        private Callback mCallback;
-
-        public GetTask(Context context, Callback callback) {
-            this.mContext = context;
-            this.mCallback = callback;
-        }
-
-        @Override
-        protected List<LedgerItem> doInBackground(Void... voids) {
-            AppDatabase db = AppDatabase.getInstance(mContext);
-            List<LedgerItem> itemList = db.ledgerDao().getAll();
-            return itemList;
-        }
-
-        @Override
-        protected void onPostExecute(List<LedgerItem> ledgerItemList) {
-            super.onPostExecute(ledgerItemList);
-
-            mCallback.onGetLedger(ledgerItemList);
-        }
-    } // ปิด GetTask
-
-    private interface Callback {
-        void onGetLedger(List<LedgerItem> itemList);
-    }
-
-    private static class InsertTask extends AsyncTask<LedgerItem, Void, Void> {
-
-        private Context mContext;
-        private InsertCallback mCallback;
-
-        public InsertTask(Context context, InsertCallback callback) {
-            this.mContext = context;
-            this.mCallback = callback;
-        }
-
-        @Override
-        protected Void doInBackground(LedgerItem... ledgerItems) {
-            AppDatabase db = AppDatabase.getInstance(mContext);
-            db.ledgerDao().insert(ledgerItems[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            mCallback.onInsertSuccess();
-        }
-    } // ปิด InsertTask
-
-    private interface InsertCallback {
-        void onInsertSuccess();
-    }
 }

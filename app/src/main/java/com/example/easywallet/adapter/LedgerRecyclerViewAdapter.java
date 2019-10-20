@@ -39,13 +39,15 @@ public class LedgerRecyclerViewAdapter extends RecyclerView.Adapter<LedgerRecycl
         LedgerItem item = mLedgerItemList.get(position);
 
         holder.descriptionTextView.setText(item.description);
-        holder.amountTextView.setText(String.valueOf(item.amount));
+        holder.amountTextView.setText(String.valueOf(Math.abs(item.amount)));
 
         if (item.amount > 0) {
             holder.ledgerTypeImageView.setImageResource(R.drawable.ic_income);
         } else {
             holder.ledgerTypeImageView.setImageResource(R.drawable.ic_expense);
         }
+
+        //holder.ledgerTypeImageView.setImageResource(item.amount > 0 ? R.drawable.ic_income : R.drawable.ic_expense);
     }
 
     @Override
