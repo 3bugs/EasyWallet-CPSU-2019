@@ -48,6 +48,11 @@ public class LedgerRecyclerViewAdapter extends RecyclerView.Adapter<LedgerRecycl
         }
     }
 
+    @Override
+    public int getItemCount() {
+        return mLedgerItemList.size();
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView ledgerTypeImageView;
