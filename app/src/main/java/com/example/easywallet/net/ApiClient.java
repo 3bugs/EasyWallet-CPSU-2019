@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-    private static final String BASE_URL = "http://localhost/easy_wallet/";
+    private static final String BASE_URL = "http://10.0.2.2/easy_wallet/";
     private static final String API_BASE_URL = BASE_URL + "api.php/";
     //public static final String IMAGE_BASE_URL = BASE_URL + "images/";
 
