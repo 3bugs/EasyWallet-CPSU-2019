@@ -66,7 +66,7 @@ public class InsertActivity extends AppCompatActivity {
                 LedgerItem item = new LedgerItem(0, description, amount * (mLedgerType == 1 ? -1 : 1));
 
                 //insertLedger(item); // กรณีเก็บข้อมูลในฐานข้อมูล SQLite บนมือถือ
-                insertLedgerOnServer(item);; // กรณีเก็บข้อมูลในฐานข้อมูล MySQL (MariaDB) บน server
+                insertLedgerOnServer(item); // กรณีเก็บข้อมูลในฐานข้อมูล MySQL (MariaDB) บน server
             }
         });
     }
