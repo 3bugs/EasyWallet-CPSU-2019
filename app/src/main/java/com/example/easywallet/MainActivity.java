@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //reloadData(); // กรณีเก็บข้อมูลในฐานข้อมูล SQLite บนมือถือ
-        reloadServerData(); // กรณีเก็บข้อมูลในฐานข้อมูล MySQL (MariaDB) บน server
+        reloadData(); // กรณีเก็บข้อมูลในฐานข้อมูล SQLite บนมือถือ
+        //reloadServerData(); // กรณีเก็บข้อมูลในฐานข้อมูล MySQL (MariaDB) บน server
     }
 
     private void reloadData() {
